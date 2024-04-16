@@ -9,7 +9,7 @@ services:
   - docker:24.0.5-dind
 
 run-tests:
-    stage: tests
+    stage: test
     image: docker.24.0.5
     script:
         - docker compose up api-tests || true
