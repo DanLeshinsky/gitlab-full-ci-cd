@@ -14,3 +14,13 @@ services:
       STAGE: prod
       SUITE: users
       API_TOKEN: ${API_TOKEN}
+
+  report:
+    image: api-tests:v1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/usr/workspace
+    command: /bin/sh -c "allure generate allure-results --clean -o allure-report"
+    working_dir: /usr/workspace
