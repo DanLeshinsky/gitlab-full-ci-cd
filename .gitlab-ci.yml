@@ -1,5 +1,5 @@
 stages:
-    - test
+    - tests
     - report
 
 variables:
@@ -8,8 +8,8 @@ variables:
 services:
   - docker:24.0.5-dind
 
-run-tests:
-    stage: test
+run_tests:
+    stage: tests
     image: docker.24.0.5
     script:
         - docker compose up api-tests || true
@@ -24,7 +24,7 @@ run-tests:
 pages:
     stage: report
     needs: 
-        - run-tests
+        - run_tests
     script:
         - mkdir public
         - cp -r allure-report/* public
