@@ -1,67 +1,43 @@
 stages:
-  - testing # Запуск тестов
-  - history_copy # Копирование результата тестов из предыдущего запуска тестов
-  - reports # Генерация отчета
-  - deploy # Публикация отчета на gitlab pages
+    - tests
+    - report
 
-docker_job:
-  stage: testing
-  tags:
-    - docker
-  image: python:3.8-alpine
-  before_script:
-    - pip install -r requirements.txt
-  script:
-    - pytest -n=4 --alluredir=./allure-results tests/
+variables:
+    STAGE: prod
 
-  allow_failure: true
-  artifacts:
-    when: always
-    paths:
-      - ./allure-results
-    expire_in: 1 day
+services:
+    - docker:24.0.5-dind
 
-history_job:
-  stage: history_copy
-  tags:
-    - docker
-  image: storytel/alpine-bash-curl
-  script:
-    - 'curl --location --output artifacts.zip "https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/jobs/artifacts/$CI_DEFAULT_BRANCH/download?job=pages&private_token=$PRIVATE_TOKEN"'
-    - apk add unzip
-    - unzip artifacts.zip
-    - chmod -R 777 public
-    - cp -r ./public/history ./allure-results
-  allow_failure: true
-  artifacts:
-    paths:
-      - ./allure-results
-    expire_in: 1 day
-  rules:
-    - when: always
-
-allure_job:
-  stage: reports
-  tags:
-    - docker
-  image: frankescobar/allure-docker-service
-  script:
-     - allure generate -c ./allure-results -o ./allure-report
-  artifacts:
-    paths:
-      - ./allure-results
-      - ./allure-report
-    expire_in: 1 day
-  rules:
-    - when: always
+run_tests:
+    stage: tests
+    image: docker:24.0.5
+    # Раскомметировать before_script после первого тестового прогона
+    before_script:
+     - apk add curl jq
+     - ARTIFACTS_CHECK_URL="https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/jobs/artifacts/$CI_DEFAULT_BRANCH/download?job=pages&private_token=$PRIVATE_TOKEN"
+     - curl -k --location --output artifacts.zip $ARTIFACTS_CHECK_URL
+     - unzip artifacts.zip
+     - chmod -R 777 public
+     - mkdir -p allure-results && cp -r public/history allure-results
+    script:
+        - docker compose up api-tests || true
+    after_script:
+        - docker compose up report
+    artifacts:
+        paths:
+            - allure-report
+        when: on_success
+        expire_in: 10 days
 
 pages:
-  stage: deploy
+  stage: report
+  needs:
+    - run_tests
   script:
     - mkdir public
-    - mv ./allure-report/* public
+    - cp -r allure-report/* public
   artifacts:
+    when: on_success
+    expire_in: never
     paths:
       - public
-  rules:
-    - when: always
