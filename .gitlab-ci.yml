@@ -10,11 +10,7 @@ services:
 
 run_tests:
     stage: tests
-<<<<<<< HEAD
-    image: docker.24.0.5
-=======
     image: docker:24.0.5
->>>>>>> 0a6ab78ab336ebd8a0722a7ea23ec1710952afe6
     script:
         - docker compose up api-tests || true
     after_script:
