@@ -11,4 +11,5 @@ class TestUsers(BaseTest):
     @allure.title("Create new user")
     def test_create_user(self):
         user = self.api_users.create_user()
-        print(self.api_users.get_user_by_uuid(user.uuid))
+        user_uuid = self.api_users.get_user_by_uuid(user.uuid)
+        print(user_uuid)

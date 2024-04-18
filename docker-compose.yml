@@ -13,7 +13,7 @@ services:
     environment:
       STAGE: prod
       SUITE: users
-      API_TOKEN: ${ API_TOKEN }
+      API_TOKEN: ${API_TOKEN}
 
   report:
     image: api-tests:v1
