@@ -16,9 +16,9 @@ run_tests:
      - ARTIFACTS_CHECK_URL="https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/jobs/artifacts/$CI_DEFAULT_BRANCH/download?job=pages&private_token=$PRIVATE_TOKEN"
      - curl -k --location --output artifacts.zip $ARTIFACTS_CHECK_URL
      - cat artifacts.zip
-     - unzip artifacts.zip
-     - chmod -R 777 public
-     - mkdir -p allure-results && cp -r public/history allure-results
+     - unzip artifacts.zip -d previous_artifacts
+     - mkdir -p allure-results
+     - cp -r previous_artifacts/public/history allure-results/history || echo "No previous history."
     script:
         - docker compose up api-tests || true
     after_script:
@@ -34,8 +34,9 @@ pages:
   needs:
     - run_tests
   script:
-    - mkdir public
-    - cp -r allure-report/* public
+    - mkdir -p public/history
+    - cp -r allure-report/* public/
+    - cp -r allure-report/history public/history
   artifacts:
     when: on_success
     expire_in: never
