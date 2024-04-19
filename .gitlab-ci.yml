@@ -34,9 +34,10 @@ pages:
   needs:
     - run_tests
   script:
-    - mkdir -p public/history
-    - cp -r allure-report/* public/
-    - cp -r allure-report/history public/history
+    - REPORT_FOLDER_NAME="report-$(date +%F-%H-%M-%S)"
+    - mkdir -p public/$REPORT_FOLDER_NAME
+    - cp -r allure-report/* public/$REPORT_FOLDER_NAME/
+    - echo "<a href='./$REPORT_FOLDER_NAME/index.html'>Run at $(date)</a><br/>" >> public/index.html
   artifacts:
     when: on_success
     expire_in: never
