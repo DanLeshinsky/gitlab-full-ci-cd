@@ -1,6 +1,6 @@
 stages:
-    - tests
-    - report
+  - tests
+  - report
 
 variables:
   STAGE: prod
@@ -9,6 +9,7 @@ services:
   - docker:24.0.5-dind
 
 run_tests:
+<<<<<<< HEAD
     stage: tests
     image: docker:24.0.5
     before_script:
@@ -27,16 +28,39 @@ run_tests:
         - allure-report
       when: on_success
       expire_in: 10 days
+=======
+  stage: tests
+  image: docker:24.0.5
+  before_script:
+    - apk add curl jq
+    - ARTIFACTS_CHECK_URL="https://$CI_SERVER_HOST/api/v4/projects/$CI_PROJECT_ID/jobs/artifacts/$CI_DEFAULT_BRANCH/download?job=pages&private_token=$PRIVATE_TOKEN"
+    - curl -k --location --output artifacts.zip $ARTIFACTS_CHECK_URL || true
+    - if [ -f artifacts.zip ]; then unzip artifacts.zip -d previous_artifacts || true; fi
+    - mkdir -p allure-results
+    - if [ -d previous_artifacts/public/history ]; then cp -r previous_artifacts/public/history allure-results/history; fi
+  script:
+    - docker compose up api-tests || true
+  after_script:
+    - if [ -d allure-results ]; then docker compose up report; fi
+  artifacts:
+    paths:
+      - allure-report
+    when: on_success
+    expire_in: 10 days
+>>>>>>> 2272bca0a09d46f9b594c95e5c71c1624fc4ff9b
 
 pages:
-    stage: report
-    needs: 
-        - run_tests
-    script:
-        - mkdir public
-        - cp -r allure-report/* public
-    artifacts:
-      when: on_success
-      expire_in: never
-      paths:
-        - public
+  stage: report
+  needs:
+    - run_tests
+  script:
+    - mkdir -p public
+    - if [ -d "allure-report/history" ]; then cp -r allure-report/history public/history; else echo "No previous history, creating first run report"; fi
+    - cp -r allure-report/* public/
+    - echo "STAGE=$STAGE" > public/environment.properties
+    - echo "RUN_NUMBER=$CI_PIPELINE_IID" >> public/environment.properties
+  artifacts:
+    when: on_success
+    expire_in: never
+    paths:
+      - public
