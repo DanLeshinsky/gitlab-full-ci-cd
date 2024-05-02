@@ -3,6 +3,7 @@
 This project demonstrates a comprehensive setup for API testing incorporating GitLab CI/CD pipelines, Docker, and Allure reports. It's designed to showcase best practices in creating and managing a robust testing environment using advanced technologies.
 
 https://github.com/DanLeshinsky/gitlab-full-ci-cd/assets/87087121/7468818d-b43b-4aa2-8f46-67522f278cbe
+
 https://github.com/DanLeshinsky/gitlab-full-ci-cd/assets/87087121/09c7f6fb-c37d-42b7-91f8-c0a46644ea95a466
 
 ## Technologies/Tools used in building the framework
