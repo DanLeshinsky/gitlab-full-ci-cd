@@ -4,7 +4,7 @@ This project demonstrates a comprehensive setup for API testing incorporating Gi
 
 https://github.com/DanLeshinsky/gitlab-full-ci-cd/assets/87087121/7468818d-b43b-4aa2-8f46-67522f278cbe
 
-https://github.com/DanLeshinsky/gitlab-full-ci-cd/assets/87087121/09c7f6fb-c37d-42b7-91f8-c0a46644ea95a466
+https://github.com/DanLeshinsky/gitlab-full-ci-cd/assets/87087121/ad02fd76-7e80-47af-9ae7-eaf54abbbd12
 
 ## Technologies/Tools used in building the framework
 Pycharm - IDE
