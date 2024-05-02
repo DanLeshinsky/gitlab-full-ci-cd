@@ -98,6 +98,7 @@ https://qa-playground.com/en/profile/backlog/auto
     `docker-compose up api-tests`
 
     `docker-compose up report`
+  
 https://github.com/DanLeshinsky/gitlab-full-ci-cd/assets/87087121/09c7f6fb-c37d-42b7-91f8-c0a46644ea95a466
 
 ## Environment Variables in Gitlab
